@@ -1,31 +1,37 @@
 package version2;
 
+import java.time.LocalDate;
+
 public class HourlyEmployee {
 
     private int empID;
-    private String empName;
+    private Name empName;
+    private MyDate birthday;
     private float totalHoursWorked;
     private double ratePerHour;
 
     public HourlyEmployee() {
         this.empID = 0;
-        this.empName = "N/A";
+        this.empName = new Name();
         this.totalHoursWorked = 0;
         this.ratePerHour = 0;
+        this.birthday = new MyDate();
     }
 
-    public HourlyEmployee(int empID, String empName) {
+    public HourlyEmployee(int empID, Name empName, MyDate birthday) {
         this.empID = empID;
         this.empName = empName;
         this.totalHoursWorked = 0;
         this.ratePerHour = 0;
+        this.birthday = birthday;
     }
 
-    public HourlyEmployee(int empID, String empName, float totalHoursWorked, double ratePerHour) {
+    public HourlyEmployee(int empID, Name empName, float totalHoursWorked, double ratePerHour, MyDate birthday) {
         this.empID = empID;
         this.empName = empName;
         this.totalHoursWorked = totalHoursWorked;
         this.ratePerHour = ratePerHour;
+        this.birthday = birthday;
     }
 
     public int getEmpID() {
@@ -36,12 +42,20 @@ public class HourlyEmployee {
         this.empID = empID;
     }
 
-    public String getEmpName() {
+    public Name getEmpName() {
         return empName;
     }
 
-    public void setEmpName(String empName) {
+    public void setEmpName(Name empName) {
         this.empName = empName;
+    }
+
+    public MyDate getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(MyDate birthday) {
+        this.birthday = birthday;
     }
 
     public float getTotalHoursWorked() {
@@ -66,6 +80,24 @@ public class HourlyEmployee {
         } else {
             return (40 * ratePerHour) + ((totalHoursWorked - 40) * (ratePerHour * 1.5));
         }
+    }
+
+    public double salaryBirthdaybonus(){
+        //add 5000 if it matches the date today to employee birthday
+        LocalDate today = LocalDate.now();
+        int currentMonth = today.getMonthValue();
+        int currentDay = today.getDayOfMonth();
+
+        int birthMonth = this.birthday.getMonth();
+        int birthDay = this.birthday.getDate();
+
+        double finalSalary = computeSalary();
+
+        if (birthMonth == currentMonth && birthDay == currentDay) {
+            finalSalary += 5000;
+        }
+
+        return finalSalary;
     }
 
     public void displayHourlyEmployee() {
