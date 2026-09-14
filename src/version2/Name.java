@@ -1,27 +1,27 @@
 package version2;
 
-public class EmployeeNames {
+public class Name {
     private String firstName;
     private char MiddleIn;
     private String lastname;
 
 
 
-    public EmployeeNames() {
+    public Name() {
         this.firstName = "N/A";
-        MiddleIn = 'N';
+        MiddleIn = '\0';
         this.lastname = "N/A";
     }
 
-    public EmployeeNames(String firstName, char middleIn, String lastname) {
+    public Name(String firstName, char middleIn, String lastname) {
         this.firstName = firstName;
         MiddleIn = middleIn;
         this.lastname = lastname;
     }
 
-    public EmployeeNames(String firstName, String lastname) {
+    public Name(String firstName, String lastname) {
         this.firstName = firstName;
-        MiddleIn = 'N';
+        MiddleIn = '\0';
         this.lastname = lastname;
     }
 

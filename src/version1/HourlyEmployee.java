@@ -1,4 +1,4 @@
-package version2;
+package version1;
 
 public class HourlyEmployee {
 
