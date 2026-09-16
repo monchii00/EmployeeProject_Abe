@@ -1,21 +1,31 @@
-package version2;
+package version3;
 
-import java.time.LocalDate;
-
-public class CommissionEmployee {
+public class BasePlusCommissionEmployee {
 
     private int empID;
     private String empName;
     private double totalSale;
+    private double baseSalary;
 
-
-    public CommissionEmployee() {
+    public BasePlusCommissionEmployee() {
+        this.empID = 0;
+        this.empName = "N/A";
+        this.totalSale = 0;
+        this.baseSalary = 0;
     }
 
-    public CommissionEmployee(int empID, String empName, double totalSale) {
+    public BasePlusCommissionEmployee(int empID, String empName) {
+        this.empID = empID;
+        this.empName = empName;
+        this.totalSale = 0;
+        this.baseSalary = 0;
+    }
+
+    public BasePlusCommissionEmployee(int empID, String empName, double totalSale, double baseSalary) {
         this.empID = empID;
         this.empName = empName;
         this.totalSale = totalSale;
+        this.baseSalary = baseSalary;
     }
 
     public int getEmpID() {
@@ -42,6 +52,14 @@ public class CommissionEmployee {
         this.totalSale = totalSale;
     }
 
+    public double getBaseSalary() {
+        return baseSalary;
+    }
+
+    public void setBaseSalary(double baseSalary) {
+        this.baseSalary = baseSalary;
+    }
+
     public double computeSalary() {
         double rate;
 
@@ -55,19 +73,18 @@ public class CommissionEmployee {
             rate = 0.20;
         }
 
-        return totalSale * rate;
+        return baseSalary + (totalSale * rate);
     }
 
-
-    public void displayCommissionEmployee() {
+    public void displayBasePlusCommissionEmployee() {
         System.out.println(this.toString());
     }
 
     @Override
     public String toString() {
         return String.format(
-            "CommissionEmployee [ID: %d, Name: %s, Sales: ₱%,.2f, Total Salary: ₱%,.2f]",
-            empID, empName, totalSale, computeSalary()
+            "BasePlusCommissionEmployee [ID: %d, Name: %s, Base: ₱%,.2f, Sales: ₱%,.2f, Total Salary: ₱%,.2f]",
+            empID, empName, baseSalary, totalSale, computeSalary()
         );
     }
 }
