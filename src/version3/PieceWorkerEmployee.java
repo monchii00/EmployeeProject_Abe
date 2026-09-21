@@ -1,47 +1,29 @@
 package version3;
 
-public class PieceWorkerEmployee {
+import java.util.Objects;
 
-    private int empID;
-    private String empName;
-    private int totalPiecesFinished;
-    private double ratePerPiece;
+public class PieceWorkerEmployee extends Employee {
+
+    private int totalPiecesFinished; 
+    private double ratePerPiece; 
 
     public PieceWorkerEmployee() {
-        this.empID = 0;
-        this.empName = "N/A";
+        super();
         this.totalPiecesFinished = 0;
-        this.ratePerPiece = 0;
+        this.ratePerPiece = 0.0;
     }
 
-    public PieceWorkerEmployee(int empID, String empName) {
-        this.empID = empID;
-        this.empName = empName;
-        this.totalPiecesFinished = 0;
-        this.ratePerPiece = 0;
+    public PieceWorkerEmployee(int totalPiecesFinished, double ratePerPiece) {
+        super();
+        setTotalPiecesFinished(totalPiecesFinished);
+        setRatePerPiece(ratePerPiece);
     }
 
-    public PieceWorkerEmployee(int empID, String empName, int totalPiecesFinished, double ratePerPiece) {
-        this.empID = empID;
-        this.empName = empName;
-        this.totalPiecesFinished = totalPiecesFinished;
-        this.ratePerPiece = ratePerPiece;
-    }
-
-    public int getEmpID() {
-        return empID;
-    }
-
-    public void setEmpID(int empID) {
-        this.empID = empID;
-    }
-
-    public String getEmpName() {
-        return empName;
-    }
-
-    public void setEmpName(String empName) {
-        this.empName = empName;
+    public PieceWorkerEmployee(int empID, Name empName, MyDate birthDate, MyDate dateHired, 
+                               int totalPiecesFinished, double ratePerPiece) {
+        super(empID, empName, birthDate, dateHired);
+        setTotalPiecesFinished(totalPiecesFinished);
+        setRatePerPiece(ratePerPiece);
     }
 
     public int getTotalPiecesFinished() {
@@ -49,7 +31,11 @@ public class PieceWorkerEmployee {
     }
 
     public void setTotalPiecesFinished(int totalPiecesFinished) {
-        this.totalPiecesFinished = totalPiecesFinished;
+        if (totalPiecesFinished >= 0) {
+            this.totalPiecesFinished = totalPiecesFinished;
+        } else {
+            System.err.println("Invalid pieces finished: Must be 0 or greater.");
+        }
     }
 
     public double getRatePerPiece() {
@@ -57,25 +43,55 @@ public class PieceWorkerEmployee {
     }
 
     public void setRatePerPiece(double ratePerPiece) {
-        this.ratePerPiece = ratePerPiece;
+        if (ratePerPiece >= 0) {
+            this.ratePerPiece = ratePerPiece;
+        } else {
+            System.err.println("Invalid rate per piece: Must be 0 or greater.");
+        }
     }
 
-    public double computeSalary() {
+    @Override
+    public double computeSalary(int currentMonth) {
         double base = totalPiecesFinished * ratePerPiece;
         double bonus = Math.floor(totalPiecesFinished / 100.0) * (10 * ratePerPiece);
         
-        return base + bonus;
+        return base + bonus + super.computeSalary(currentMonth);
     }
 
     public void displayPieceWorkerEmployee() {
-        System.out.println(this.toString());
+        displayEmployee(); 
+        System.out.println("Total Pieces Finished: " + totalPiecesFinished);
+        System.out.println("Rate Per Piece: " + ratePerPiece);
+        System.out.println("Total Salary: " + computeSalary());
     }
 
     @Override
     public String toString() {
-        return String.format(
-            "PieceWorkerEmployee [ID: %d, Name: %s, Pieces: %d, Rate: ₱%,.2f, Total Salary: ₱%,.2f]",
-            empID, empName, totalPiecesFinished, ratePerPiece, computeSalary()
-        );
+        return super.toString() + ", PieceWorkerEmployee [totalPiecesFinished=" + totalPiecesFinished 
+                + ", ratePerPiece=" + ratePerPiece 
+                + ", computedSalary=" + computeSalary() + "]";
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!super.equals(obj)) {
+            return false;
+        }
+        if (!(obj instanceof PieceWorkerEmployee)) {
+            return false;
+        }
+        PieceWorkerEmployee other = (PieceWorkerEmployee) obj;
+        return this.totalPiecesFinished == other.totalPiecesFinished
+                && Double.compare(this.ratePerPiece, other.ratePerPiece) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), totalPiecesFinished, ratePerPiece);
+    }
+
+    @Override
+    public PieceWorkerEmployee clone() {
+        return (PieceWorkerEmployee) super.clone();
     }
 }

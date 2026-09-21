@@ -1,35 +1,24 @@
 package version3;
 
-public class CommissionEmployee {
+import java.util.Objects;
 
-    private int empID;
-    private String empName;
+public class CommissionEmployee extends Employee {
+
     private double totalSale;
 
-
     public CommissionEmployee() {
+        super();
+        this.totalSale = 0.0;
     }
 
-    public CommissionEmployee(int empID, String empName, double totalSale) {
-        this.empID = empID;
-        this.empName = empName;
-        this.totalSale = totalSale;
+    public CommissionEmployee(double totalSale) {
+        super();
+        setTotalSale(totalSale);
     }
 
-    public int getEmpID() {
-        return empID;
-    }
-
-    public void setEmpID(int empID) {
-        this.empID = empID;
-    }
-
-    public String getEmpName() {
-        return empName;
-    }
-
-    public void setEmpName(String empName) {
-        this.empName = empName;
+    public CommissionEmployee(int empID, Name empName, MyDate birthDate, MyDate dateHired, double totalSale) {
+        super(empID, empName, birthDate, dateHired);
+        setTotalSale(totalSale);
     }
 
     public double getTotalSale() {
@@ -37,35 +26,66 @@ public class CommissionEmployee {
     }
 
     public void setTotalSale(double totalSale) {
-        this.totalSale = totalSale;
-    }
-
-    public double computeSalary() {
-        double rate;
-
-        if (totalSale < 50000) {
-            rate = 0.05;
-        } else if (totalSale < 100000) {
-            rate = 0.10;
-        } else if (totalSale < 500000) {
-            rate = 0.15;
+        if (totalSale >= 0) {
+            this.totalSale = totalSale;
         } else {
-            rate = 0.20;
+            System.err.println("Invalid sale amount: Must be 0 or greater.");
         }
-
-        return totalSale * rate;
     }
 
+    public double getCommissionRate() {
+        if (totalSale < 50000.0) {
+            return 0.05;
+        } else if (totalSale < 100000.0) {
+            return 0.10;
+        } else if (totalSale < 500000.0) {
+            return 0.15;
+        } else {
+            return 0.20;
+        }
+    }
+
+    @Override
+    public double computeSalary(int currentMonth) {
+        double commissionPay = totalSale * getCommissionRate();
+        return commissionPay + super.computeSalary(currentMonth); 
+    }
 
     public void displayCommissionEmployee() {
-        System.out.println(this.toString());
+        displayEmployee();
+        System.out.println("Total Sales: " + totalSale);
+        System.out.println("Commission Rate: " + (getCommissionRate() * 100) + "%");
+        System.out.println("Computed Salary: " + computeSalary());
     }
 
     @Override
     public String toString() {
-        return String.format(
-            "CommissionEmployee [ID: %d, Name: %s, Sales: ₱%,.2f, Total Salary: ₱%,.2f]",
-            empID, empName, totalSale, computeSalary()
-        );
+        return super.toString() + ", CommissionEmployee [totalSale=" + totalSale 
+                + ", commissionRate=" + getCommissionRate() 
+                + ", computedSalary=" + computeSalary() + "]";
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!super.equals(obj)) {
+            return false;
+        }
+
+        if (!(obj instanceof CommissionEmployee)) {
+            return false;
+        }
+
+        CommissionEmployee other = (CommissionEmployee) obj;
+        return Double.compare(this.totalSale, other.totalSale) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), totalSale);
+    }
+
+    @Override
+    public CommissionEmployee clone() {
+        return (CommissionEmployee) super.clone();
     }
 }

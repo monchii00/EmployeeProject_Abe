@@ -1,55 +1,30 @@
 package version3;
 
-public class BasePlusCommissionEmployee {
+import java.util.Objects;
 
-    private int empID;
-    private String empName;
-    private double totalSale;
+public class BasePlusCommissionEmployee extends CommissionEmployee {
+
     private double baseSalary;
 
     public BasePlusCommissionEmployee() {
-        this.empID = 0;
-        this.empName = "N/A";
-        this.totalSale = 0;
-        this.baseSalary = 0;
+        super();
+        this.baseSalary = 0.0;
     }
 
-    public BasePlusCommissionEmployee(int empID, String empName) {
-        this.empID = empID;
-        this.empName = empName;
-        this.totalSale = 0;
-        this.baseSalary = 0;
+    public BasePlusCommissionEmployee(double baseSalary) {
+        super();
+        setBaseSalary(baseSalary);
     }
 
-    public BasePlusCommissionEmployee(int empID, String empName, double totalSale, double baseSalary) {
-        this.empID = empID;
-        this.empName = empName;
-        this.totalSale = totalSale;
-        this.baseSalary = baseSalary;
+    public BasePlusCommissionEmployee(double totalSale, double baseSalary) {
+        super(totalSale);
+        setBaseSalary(baseSalary);
     }
 
-    public int getEmpID() {
-        return empID;
-    }
-
-    public void setEmpID(int empID) {
-        this.empID = empID;
-    }
-
-    public String getEmpName() {
-        return empName;
-    }
-
-    public void setEmpName(String empName) {
-        this.empName = empName;
-    }
-
-    public double getTotalSale() {
-        return totalSale;
-    }
-
-    public void setTotalSale(double totalSale) {
-        this.totalSale = totalSale;
+    public BasePlusCommissionEmployee(int empID, Name empName, MyDate birthDate, MyDate dateHired, 
+                                      double totalSale, double baseSalary) {
+        super(empID, empName, birthDate, dateHired, totalSale);
+        setBaseSalary(baseSalary);
     }
 
     public double getBaseSalary() {
@@ -57,34 +32,54 @@ public class BasePlusCommissionEmployee {
     }
 
     public void setBaseSalary(double baseSalary) {
-        this.baseSalary = baseSalary;
+        if (baseSalary >= 0) {
+            this.baseSalary = baseSalary;
+        } else {
+            System.err.println("Invalid base salary: Value must be 0 or greater.");
+        }
     }
 
-    public double computeSalary() {
-        double rate;
-
-        if (totalSale < 50000) {
-            rate = 0.05;
-        } else if (totalSale < 100000) {
-            rate = 0.10;
-        } else if (totalSale < 500000) {
-            rate = 0.15;
-        } else {
-            rate = 0.20;
-        }
-
-        return baseSalary + (totalSale * rate);
+    @Override
+    public double computeSalary(int currentMonth) {
+        return baseSalary + super.computeSalary(currentMonth);
     }
 
     public void displayBasePlusCommissionEmployee() {
-        System.out.println(this.toString());
+        displayEmployee();
+        System.out.println("Base Salary: " + baseSalary);
+        System.out.println("Total Sales: " + getTotalSale());
+        System.out.println("Commission Rate: " + (getCommissionRate() * 100) + "%");
+        System.out.println("Total Compensation: " + computeSalary());
     }
 
     @Override
     public String toString() {
-        return String.format(
-            "BasePlusCommissionEmployee [ID: %d, Name: %s, Base: ₱%,.2f, Sales: ₱%,.2f, Total Salary: ₱%,.2f]",
-            empID, empName, baseSalary, totalSale, computeSalary()
-        );
+        return super.toString() + ", BasePlusCommissionEmployee [baseSalary=" + baseSalary 
+                + ", totalSale=" + getTotalSale() 
+                + ", totalCompensation=" + computeSalary() + "]";
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!super.equals(obj)) {
+            return false;
+        }
+
+        if (!(obj instanceof BasePlusCommissionEmployee)) {
+            return false;
+        }
+
+        BasePlusCommissionEmployee other = (BasePlusCommissionEmployee) obj;
+        return Double.compare(this.baseSalary, other.baseSalary) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), baseSalary);
+    }
+
+    @Override
+    public BasePlusCommissionEmployee clone() {
+        return (BasePlusCommissionEmployee) super.clone();
     }
 }

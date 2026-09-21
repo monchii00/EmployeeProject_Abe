@@ -1,68 +1,28 @@
 package version3;
 
-import version2.MyDate;
-import version2.Name;
+import java.util.Objects;
 
-import java.time.LocalDate;
+public class HourlyEmployee extends Employee {
 
-public class HourlyEmployee {
-
-    private int empID;
-    private Name empName;
-    private MyDate birthday;
-    private MyDate datehired;
     private float totalHoursWorked;
-    private double ratePerHour;
+    private double ratePerHour; 
 
     public HourlyEmployee() {
-        this.empID = 0;
-        this.empName = new Name();
+        super(); 
         this.totalHoursWorked = 0;
-        this.ratePerHour = 0;
-        this.birthday = new MyDate();
-        this.datehired = new MyDate();
+        this.ratePerHour = 0; 
+    }
+    
+    public HourlyEmployee(float totalHoursWorked, double ratePerHour) {
+        super(); 
+        setTotalHoursWorked(totalHoursWorked);
+        setRatePerHour(ratePerHour);
     }
 
-    public HourlyEmployee(int empID, Name empName, MyDate birthday, MyDate datehired) {
-        this.empID = empID;
-        this.empName = empName;
-        this.totalHoursWorked = 0;
-        this.ratePerHour = 0;
-        this.birthday = birthday;
-        this.datehired = datehired;
-    }
-
-    public HourlyEmployee(int empID, Name empName, float totalHoursWorked, double ratePerHour, MyDate birthday, MyDate datehired) {
-        this.empID = empID;
-        this.empName = empName;
-        this.totalHoursWorked = totalHoursWorked;
-        this.ratePerHour = ratePerHour;
-        this.birthday = birthday;
-        this.datehired = datehired;
-    }
-
-    public int getEmpID() {
-        return empID;
-    }
-
-    public void setEmpID(int empID) {
-        this.empID = empID;
-    }
-
-    public Name getEmpName() {
-        return empName;
-    }
-
-    public void setEmpName(Name empName) {
-        this.empName = empName;
-    }
-
-    public MyDate getBirthday() {
-        return birthday;
-    }
-
-    public void setBirthday(MyDate birthday) {
-        this.birthday = birthday;
+    public HourlyEmployee(int empID, Name empName, MyDate birthDate, MyDate dateHired, float totalHoursWorked, double ratePerHour) {
+        super(empID, empName, birthDate, dateHired);
+        setTotalHoursWorked(totalHoursWorked);
+        setRatePerHour(ratePerHour);
     }
 
     public float getTotalHoursWorked() {
@@ -70,7 +30,11 @@ public class HourlyEmployee {
     }
 
     public void setTotalHoursWorked(float totalHoursWorked) {
-        this.totalHoursWorked = totalHoursWorked;
+        if (totalHoursWorked >= 0) {
+            this.totalHoursWorked = totalHoursWorked;
+        } else {
+            System.err.println("Invalid hours worked: Value must be 0 or greater.");
+        }
     }
 
     public double getRatePerHour() {
@@ -78,52 +42,52 @@ public class HourlyEmployee {
     }
 
     public void setRatePerHour(double ratePerHour) {
-        this.ratePerHour = ratePerHour;
-    }
-
-    public MyDate getDatehired() {
-        return datehired;
-    }
-
-    public void setDatehired(MyDate datehired) {
-        this.datehired = datehired;
-    }
-
-    public double computeSalary() {
-        if (totalHoursWorked <= 40) {
-            return totalHoursWorked * ratePerHour;
+        if (ratePerHour >= 0) {
+            this.ratePerHour = ratePerHour;
         } else {
-            return (40 * ratePerHour) + ((totalHoursWorked - 40) * (ratePerHour * 1.5));
+            System.err.println("Invalid rate per hour: Value must be 0 or greater.");
         }
     }
 
-    public double salaryBirthdaybonus(){
-        //add 5000 if it matches the date today to employee birthday
-        LocalDate today = LocalDate.now();
-        int currentMonth = today.getMonthValue();
-        int currentDay = today.getDayOfMonth();
-
-        int birthMonth = this.birthday.getMonth();
-        int birthDay = this.birthday.getDate();
-
-        double finalSalary = computeSalary();
-
-        if (birthMonth == currentMonth && birthDay == currentDay) {
-            finalSalary += 5000;
+    @Override
+    public double computeSalary(int currentMonth) {
+        double basePay;
+        if (totalHoursWorked <= 40) {
+            basePay = totalHoursWorked * ratePerHour;
+        } else {
+            double regularHours = 40.0;
+            double overtimeHours = totalHoursWorked - 40.0;
+            basePay = (regularHours * ratePerHour) + (overtimeHours * ratePerHour * 1.5);
         }
-
-        return finalSalary;
+        return basePay + super.computeSalary(currentMonth);
     }
 
     public void displayHourlyEmployee() {
-        System.out.println(this.toString());
+        displayEmployee();
+        System.out.println("Hours Worked: " + totalHoursWorked + " | Rate/Hr: " + ratePerHour + " | Total Salary: " + computeSalary());
     }
 
     @Override
     public String toString() {
-        return String.format(
-            "HourlyEmployee [ID: %d, Name: %s, Hours: %.2f, Rate: ₱%,.2f, Total Salary: ₱%,.2f]",
-            empID, empName, totalHoursWorked, ratePerHour, computeSalary()
-        );
+        return super.toString() + ", HourlyEmployee [totalHoursWorked=" + totalHoursWorked + ", ratePerHour=" + ratePerHour + ", totalSalary=" + computeSalary() + "]";
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!super.equals(obj)) return false;
+        if (!(obj instanceof HourlyEmployee)) return false;
+        HourlyEmployee other = (HourlyEmployee) obj;
+        return Float.compare(this.totalHoursWorked, other.totalHoursWorked) == 0
+                && Double.compare(this.ratePerHour, other.ratePerHour) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), totalHoursWorked, ratePerHour);
+    }
+
+    @Override
+    public HourlyEmployee clone() {
+        return (HourlyEmployee) super.clone();
     }
 }
